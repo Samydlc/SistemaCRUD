@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Details";
 }
-
+<br />
+<img src="~/images/logo.png" height="20" right="20" />
 <h2></h2>
 
 <div>
@@ -43,6 +44,7 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    @Html.ActionLink("Editar","Update", new {  id = Model.Id  }) |
     <a asp-action="Index">Regresar</a>
+
 </div>

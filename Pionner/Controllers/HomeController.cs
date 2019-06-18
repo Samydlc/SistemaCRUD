@@ -131,7 +131,7 @@ namespace Pionner.Controllers
             string connectionString = Configuration["ConnectionStrings:SQLConnection"];
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sql = $"update Controlador set Modelo = '{controlador.Modelo}' , Software = '{controlador.Software}' , Canales= '{controlador.Canales}' , Precio= '{controlador.Precio}' Where Id = '{controlador.Id}'";
+                string sql = $"Update Controlador set Modelo = '{controlador.Modelo}' , Software = '{controlador.Software}' , Canales= '{controlador.Canales}' , Precio= '{controlador.Precio}' Where Id = '{controlador.Id}'";
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -146,12 +146,13 @@ namespace Pionner.Controllers
        
         //Eliminar
         [HttpPost]
-        public IActionResult Delete(int Id)
+        [ActionName("Delete")]
+        public IActionResult Detele(int Id)
         {
             string connectionString = Configuration["ConnectionStrings:SQLConnection"];
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string sql = $"delete from Controlador Where Id='{Id}'";
+                string sql = $"Delete From Controlador Where Id='{Id}'";
                 using (SqlCommand command = new SqlCommand(sql, connection))
                 {
                     connection.Open();
@@ -161,13 +162,40 @@ namespace Pionner.Controllers
                     }
                     catch (SqlException ex)
                     {
-                        ViewBag.Result = "No se pudo localizar el dato solicitado:" + ex.Message;
+                        ViewBag.Result = "error:" + ex.Message;
                     }
                     connection.Close();
                     connection.Dispose();
                 }
             }
             return RedirectToAction("List");
+        }
+
+        //eliminar
+        public IActionResult Delete(int Id)
+        {
+            string connectionString = Configuration["ConnectionStrings:SQLConnection"];
+            Controlador cont = new Controlador();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string sql = $"select * from Controlador where Id='{Id}'";
+                SqlCommand command = new SqlCommand(sql, connection);
+                connection.Open();
+                using (SqlDataReader drd = command.ExecuteReader())
+                {
+                    while (drd.Read())
+                    {
+                        cont.Id = Convert.ToInt32(drd["Id"]);
+                        cont.Modelo = Convert.ToString(drd["Modelo"]);
+                        cont.Software = Convert.ToString(drd["Software"]);
+                        cont.Canales = Convert.ToInt32(drd["Canales"]);
+                        cont.Precio = Convert.ToInt32(drd["Precio"]);
+                    }
+                }
+                connection.Close();
+                connection.Dispose();
+            }
+            return View(cont);
         }
 
         //Detalles
@@ -197,6 +225,20 @@ namespace Pionner.Controllers
             return View(cont);
         }
 
+        public IActionResult Galeria()
+        {
+            return View();
+        }
+
+        public IActionResult Catalogos()
+        {
+            return View();
+        }
+        public IActionResult Software()
+        {
+            return View();
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
@@ -211,10 +253,15 @@ namespace Pionner.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Pdf()
         {
             return View();
         }
+        public IActionResult Privacidad()
+        {
+            return View();
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

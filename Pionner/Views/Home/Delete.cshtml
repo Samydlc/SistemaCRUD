@@ -1,7 +1,7 @@
 ﻿@model Pionner.Models.Controlador
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Bajas";
 }
 
 <h2>Eliminar</h2>
@@ -43,8 +43,9 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
-        <input type="submit" value="Eliminar" class="btn btn-default" /> |
-        <a asp-action="Index">Regresar</a>
+    <form asp-action="Delete" method="post">
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <input type="submit"  asp-action="List" value="Regresar" class="btn btn-danger" />
+       
     </form>
 </div>
