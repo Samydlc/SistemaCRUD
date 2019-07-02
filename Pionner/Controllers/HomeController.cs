@@ -5,22 +5,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Pionner.Models;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 //Lib
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 
+
 namespace Pionner.Controllers
 {
     public class HomeController : Controller
     {
+       
         public IConfiguration Configuration { get; }
-
-        public HomeController(IConfiguration configuration)
+        private readonly IHostingEnvironment he;
+        public HomeController(IConfiguration configuration, IHostingEnvironment e)
         {
             Configuration = configuration;
+            he = e;
         }
-        //
+       
         public IActionResult Index()
         {
             return View();
@@ -45,11 +51,6 @@ namespace Pionner.Controllers
                     using (SqlCommand command = new SqlCommand(sql,connection)) 
                     {
                         command.CommandType = CommandType.Text;
-                        // command.Parameters.AddWithValue("@id", controlador.Id);
-                        //command.Parameters.AddWithValue("@modelo", controlador.Modelo);
-                        //command.Parameters.AddWithValue("@software", controlador.Software);
-                        //command.Parameters.AddWithValue("@canales", controlador.Canales);
-                        //command.Parameters.AddWithValue("@precio", controlador.Precio);
                         connection.Open();
                         command.ExecuteNonQuery();
                         connection.Close();
@@ -96,8 +97,7 @@ namespace Pionner.Controllers
                     return View(lista);
                     }
 
-
-        //actualizar
+ //actualizar
         public IActionResult Update(int Id)
         {
             string connectionString = Configuration["ConnectionStrings:SQLConnection"];
@@ -142,9 +142,7 @@ namespace Pionner.Controllers
             }
             return RedirectToAction("List");
         }
-
-       
-        //Eliminar
+//Eliminar
         [HttpPost]
         [ActionName("Delete")]
         public IActionResult Detele(int Id)
@@ -224,7 +222,31 @@ namespace Pionner.Controllers
             }
             return View(cont);
         }
+        //Subir pdf ERRO 
+     
+        public IActionResult ShowFields(string fullName, IFormFile pic, IFormFile pica)
+        {
+            ViewData["fname"] = fullName;
+            if (pic != null)
+            {
+                var fileName = Path.Combine(he.WebRootPath, Path.GetFileName(pic.FileName));
+                pic.CopyTo(new FileStream(fileName, FileMode.Create));
+                ViewData["fileLocation"] = "/" + Path.GetFileName(pic.FileName);
+            }
+            if (pica != null)
+            {
+                var fileName = Path.Combine(he.WebRootPath, Path.GetFileName(pica.FileName));
+                pica.CopyTo(new FileStream(fileName, FileMode.Create));
+                ViewData["file"] = "/" + Path.GetFileName(pica.FileName);
+            }
+            return View();
+        }
+        public IActionResult Subir()
+        {
+            return View();
+        }
 
+        //
         public IActionResult Galeria()
         {
             return View();
